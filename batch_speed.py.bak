@@ -17,11 +17,13 @@ def run():
         data = fetch_user_location_logs(uid, db)
         for day in range(1, 32):
             day = '201312%02d' % day
-            rows_by_day = [x for x in data if x['day'] == day]
+            rows_by_day = filter(lambda x: x['day'] == day, data)
             if not rows_by_day:
                 continue
-            rows_by_day = [[x['start_time'], x['location']] for x in rows_by_day]
-            speeds = [x['speed'] for x in get_speed_by_day(rows_by_day, day)]
+            rows_by_day = map(lambda x: [x['start_time'], x['location']],
+                              rows_by_day)
+            speeds = map(lambda x: x['speed'],
+                         get_speed_by_day(rows_by_day, day))
             output.write(','.join(map(str, [uid, day] + speeds)) + '\n')
     output.close()
 

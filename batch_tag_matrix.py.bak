@@ -13,9 +13,8 @@ import sys
 import json
 from csv import DictWriter
 import sys
-import imp
 
-imp.reload(sys)
+reload(sys)
 exec("sys.setdefaultencoding('utf-8')");
 
 
@@ -29,17 +28,17 @@ def run():
         data = fetch_user_location_logs(uid, db)
         locations = merge_locations(data)
         matrix = generate_matrix(locations)
-        semantic_data = fetch_semantic_data(list(matrix.keys()))
+        semantic_data = fetch_semantic_data(matrix.keys())
         semantic_dict = {}
         for row in semantic_data:
             semantic_dict[row['location']] = clean_tags(row['tags'], 5)
         tag_matrix = {}
-        for location, proba in list(matrix.items()):
+        for location, proba in matrix.items():
             tag_dict = semantic_dict[location]
-            tag_weight = sum(v for v in list(tag_dict.values()))
+            tag_weight = sum(v for v in tag_dict.values())
             if tag_weight == 0:
                 continue
-            for tag, cnt in list(tag_dict.items()):
+            for tag, cnt in tag_dict.items():
                 tag_matrix.setdefault(tag, [0] * 48)
                 for i in range(48):
                     tag_matrix[tag][i] += (proba[i] * cnt + 0.001) / (tag_weight + 0.001)

@@ -19,7 +19,7 @@ def generate_matrix(data):
         for record in day['locations']:
             int_start, int_end = get_time_interval(record['start_time'],
                                                    record['end_time'])
-            for i in range(int_start, int_end + 1):
+            for i in xrange(int_start, int_end + 1):
                 matrix[record['location']][i] += 1 / n
     return matrix
 
@@ -49,7 +49,7 @@ if __name__ == '__main__':
     data = json.load(open('53008957.json'))
     result = generate_matrix(data)
     def print_result(result):
-        for location, row in list(result.items()):
-            print(location)
-            print(' '.join(["%.3f" % x for x in row]))
-    print(json.dumps(result))
+        for location, row in result.items():
+            print location
+            print ' '.join(map(lambda x: "%.3f" % x, row))
+    print json.dumps(result)

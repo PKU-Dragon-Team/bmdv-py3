@@ -19,8 +19,8 @@ def active_matrix(logs):
         result[day][entity][minute_to_range(log['minute'])] += 1
     avg_result = {}
     n = float(len(result))
-    for day_data in list(result.values()):
-        for app, matrix in list(day_data.items()):
+    for day_data in result.values():
+        for app, matrix in day_data.items():
             avg_result.setdefault(app, [0] * 48)
             for i in range(48):
                 avg_result[app][i] += matrix[i]

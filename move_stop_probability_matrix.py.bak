@@ -39,6 +39,6 @@ def generate_status_matrix(moves, stops):
     n = len(data)
     for i in range(48):
         counter = Counter([data[j][i] for j in range(n)])
-        for k, v in list(counter.items()):
+        for k, v in counter.items():
             matrix[mp[k]][i] = float(v) / n
     return matrix

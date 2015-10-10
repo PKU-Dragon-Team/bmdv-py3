@@ -21,7 +21,7 @@ def fetch_users(db, pagecnt=10000):
         if not users:
             break
 
-        for uid in [x[0] for x in users]:
+        for uid in map(lambda x: x[0], users):
             yield uid
 
         offset += 1
@@ -33,7 +33,7 @@ def fetch_user_location_logs(uid, db):
                         from location_logs_with_date
                         where uid = %s order by start_time"""
     data = db.fetchall(prepare_sql, (uid,))
-    return [dict(list(zip(cols, row))) for row in data]
+    return [dict(zip(cols, row)) for row in data]
 
 
 def fetch_semantic_logs(uid, db):
@@ -46,4 +46,4 @@ def fetch_semantic_logs(uid, db):
                         where a.uid = %s
                         order by a.start_time"""
     data = db.fetchall(prepare_sql, (uid,))
-    return [dict(list(zip(cols, row))) for row in data]
+    return [dict(zip(cols, row)) for row in data]
