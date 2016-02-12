@@ -1,6 +1,9 @@
 #!/usr/bin/env python
 # encoding: utf-8
 
+import pymysql
+pymysql.install_as_MySQLdb()
+
 from flask import Flask, make_response
 from json import dumps
 from flask.ext.cors import CORS

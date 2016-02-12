@@ -4,7 +4,7 @@
 from collections import Counter
 
 
-tag_whitelist = set([x.split(':')[0] for x in open('top100.tags.txt').readlines()])
+tag_whitelist = set([x.split(':')[0] for x in open('top100.tags.txt', encoding='utf-8').readlines()])
 
 tag_blacklist = set(['地名地址信息', '交通地名',
                      '路口名', '热点地名', '桥', '区县级地名',
