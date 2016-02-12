@@ -6,7 +6,7 @@ def get_most_proba_locations(matrix):
     n = len(matrix[list(matrix.keys())[0]])
     total_probas = [sum([row[i] for row in list(matrix.values())]) for i in range(n)]
     t = 0.3
-    thresholds = [proba / 2 if proba > t else 2 for proba in total_probas]
+    thresholds = [proba * 0.4 if proba > t else 2 for proba in total_probas]
     most_proba_locations = [[location for location, row in list(matrix.items()) if row[i] >= thresholds[i]] for i in range(n)]
     return most_proba_locations
 

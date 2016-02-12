@@ -3,6 +3,10 @@
 config.py
 *.pyc
 
+*.csv
+*.json
+.vscode
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

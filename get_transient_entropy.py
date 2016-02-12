@@ -69,7 +69,7 @@ def entropy(move, delta_t, time_range):
 
 
 def transient_entropy(location, move):
-    delta_t = 10
+    delta_t = 60
 
     # set start_time
     start_time = str2date(location['start_time'])
