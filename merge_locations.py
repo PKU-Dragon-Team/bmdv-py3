@@ -34,17 +34,14 @@ def raw_merge_locations_by_date(logs):
 
 
 def check_error_points(result):
-    invalid_items = set(map(lambda x: (x['location'], x['start_time']),
-                        filter(lambda x: x['start_time'] == x['end_time'],
-                               result)))
+    invalid_items = set([(x['location'], x['start_time']) for x in [x for x in result if x['start_time'] == x['end_time']]])
     return invalid_items
 
 
 def merge_locations_by_date(logs):
     result = raw_merge_locations_by_date(logs)
     invalid_items = check_error_points(result)
-    logs = filter(
-        lambda x: (x['location'], x['start_time']) not in invalid_items, logs)
+    logs = [x for x in logs if (x['location'], x['start_time']) not in invalid_items]
     return raw_merge_locations_by_date(logs)
 
 

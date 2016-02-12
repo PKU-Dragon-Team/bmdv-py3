@@ -5,9 +5,9 @@ from math import sqrt
 
 def sts(v1, v2):
     n = len(v1)
-    d1 = [v1[i] - v1[i - 1] for i in xrange(1, n)]
-    d2 = [v2[i] - v2[i - 1] for i in xrange(1, n)]
-    return np.sqrt(sum([(d1[i] - d2[i]) ** 2 for i in xrange(n - 1)]))
+    d1 = [v1[i] - v1[i - 1] for i in range(1, n)]
+    d2 = [v2[i] - v2[i - 1] for i in range(1, n)]
+    return np.sqrt(sum([(d1[i] - d2[i]) ** 2 for i in range(n - 1)]))
 
 
 def pearson(v1, v2):
@@ -42,7 +42,7 @@ def kcluster(rows, distance, k):
 
     lastmatches = None
     for t in range(100):
-        print 'Iteration %d' % t
+        print('Iteration %d' % t)
         bestmatches = [[] for i in range(k)]
 
         # Find which centroid is the closest for each row
@@ -104,7 +104,7 @@ def silhouette_coef(idx, X, labels, dist):
 
 
 def silhouette_score(X, labels, dist):
-    return np.mean([silhouette_coef(i, X, labels, dist) for i in xrange(len(X))])
+    return np.mean([silhouette_coef(i, X, labels, dist) for i in range(len(X))])
 
 
 def pick_k(X, rng, dist):
@@ -114,4 +114,4 @@ def pick_k(X, rng, dist):
         labels = np.empty(n, dtype=int)
         for j in range(i):
             labels[K[j]] = j
-        print i, silhouette_score(X, labels, dist)
+        print(i, silhouette_score(X, labels, dist))

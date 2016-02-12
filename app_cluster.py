@@ -18,11 +18,11 @@ def preprocess(filepath):
     df.set_index('uid', inplace=True)
     df['data'] = df['data'].map(lambda x: json.loads(x))
 
-    apps = set(['QQ', u'微信', u'手机腾讯网'])
+    apps = set(['QQ', '微信', '手机腾讯网'])
     # apps = set([])
 
     def to_avg(row):
-        return {k: np.mean(v) for k, v in row.items() if k not in apps}
+        return {k: np.mean(v) for k, v in list(row.items()) if k not in apps}
 
     return df['data'].map(to_avg)
 
@@ -38,7 +38,7 @@ def normalize(row):
     if not len(row):
         return {}
     minactive = min(row.values())
-    return {k: v - minactive for k, v in row.items()}
+    return {k: v - minactive for k, v in list(row.items())}
 
 app_mean = preprocess('app_matrix.csv')
 normalized_app_mean = app_mean.map(normalize)
@@ -49,6 +49,6 @@ fig, axes = plt.subplots(k, 1)
 centers = dv.inverse_transform(C)
 N = 20
 for i in range(k):
-    d = dict(sorted(centers[i].items(), key=lambda x: x[1], reverse=True)[:N])
-    serie = pd.Series(d.values(), index=d.keys())
+    d = dict(sorted(list(centers[i].items()), key=lambda x: x[1], reverse=True)[:N])
+    serie = pd.Series(list(d.values()), index=list(d.keys()))
     serie.plot(kind='bar', ax=axes[i])

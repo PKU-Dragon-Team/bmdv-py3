@@ -55,7 +55,7 @@ def user(uid):
         from users where uid = %s"""
     cursor.execute(prepare_sql, (uid,))
     row = cursor.fetchone()
-    result = dict(zip(cols, row))
+    result = dict(list(zip(cols, row)))
     return make_response(dumps(result))
 
 
@@ -69,7 +69,7 @@ def users(offset, limit):
         from users where high >= '7' limit %s offset %s"""
     cursor.execute(prepare_sql, (limit, offset))
     rows = cursor.fetchall()
-    results = [dict(zip(cols, row)) for row in rows]
+    results = [dict(list(zip(cols, row))) for row in rows]
     return make_response(dumps(results))
 
 
@@ -82,7 +82,7 @@ def gprs_count_by_hour(uid):
                         from app_domain_logs where uid = %s group by day, hour"""
     cursor.execute(prepare_sql, (uid,))
     rows = cursor.fetchall()
-    results = [dict(zip(cols, row)) for row in rows]
+    results = [dict(list(zip(cols, row))) for row in rows]
     return make_response(dumps(results))
 
 
@@ -98,7 +98,7 @@ def call_count_by_hour(uid):
                         from calls where uid = %s group by day, hour"""
     cursor.execute(prepare_sql, (uid,))
     rows = cursor.fetchall()
-    results = [dict(zip(cols, row)) for row in rows]
+    results = [dict(list(zip(cols, row))) for row in rows]
     return make_response(dumps(results))
 
 
@@ -111,7 +111,7 @@ def gprs_count_by_day(uid):
                         where uid = %s group by day"""
     cursor.execute(prepare_sql, (uid,))
     rows = cursor.fetchall()
-    results = [dict(zip(cols, row)) for row in rows]
+    results = [dict(list(zip(cols, row))) for row in rows]
     return make_response(dumps(results))
 
 
@@ -124,7 +124,7 @@ def call_count_by_day(uid):
                         where uid = %s group by day"""
     cursor.execute(prepare_sql, (uid,))
     rows = cursor.fetchall()
-    results = [dict(zip(cols, row)) for row in rows]
+    results = [dict(list(zip(cols, row))) for row in rows]
     return make_response(dumps(results))
 
 
@@ -150,7 +150,7 @@ def fetch_uid_location_data(uid):
                         where uid = %s order by day, start_time"""
     cursor.execute(prepare_sql, (uid,))
     rows = cursor.fetchall()
-    return [dict(zip(cols, row)) for row in rows]
+    return [dict(list(zip(cols, row))) for row in rows]
 
 
 def fetch_uid_semantic_data(uid):
@@ -166,7 +166,7 @@ def fetch_uid_semantic_data(uid):
                         order by a.start_time"""
     cursor.execute(prepare_sql, (uid,))
     rows = cursor.fetchall()
-    return [dict(zip(cols, row)) for row in rows]
+    return [dict(list(zip(cols, row))) for row in rows]
 
 
 def fetch_uid_business_data(uid):
@@ -200,7 +200,7 @@ def _location_by_uid_stop(uid):
 def area_by_uid_stop(uid, area_func=fetch_uid_business_data):
     results = area_func(uid)
     invalids = check_error_points(raw_merge_locations_by_date(results))
-    results = filter(lambda x: (x['location'], x['start_time']) not in invalids, results)
+    results = [x for x in results if (x['location'], x['start_time']) not in invalids]
     locations = merge_locations(results)
     get_delta(locations)
     locations = get_stop(locations, 30)
@@ -233,10 +233,9 @@ def raw_location_by_uid_day(uid, day):
                         where uid = %s and log_date = %s order by start_time"""
     cursor.execute(prepare_sql, (uid, day))
     rows = cursor.fetchall()
-    results = [dict(zip(cols, row)) for row in rows]
+    results = [dict(list(zip(cols, row))) for row in rows]
     invalids = check_error_points(raw_merge_locations_by_date(results))
-    results = filter(
-        lambda x: (x['location'], x['start_time']) not in invalids, results)
+    results = [x for x in results if (x['location'], x['start_time']) not in invalids]
     return make_response(dumps(results))
 
 
@@ -281,15 +280,14 @@ def get_speed_by_day(all_rows, day):
     for i in range(len(timestamps)):
         start_time = timestamps[i].to_datetime() - datetime.timedelta(minutes=delta_t / 2)
         end_time = timestamps[i].to_datetime() + datetime.timedelta(minutes=delta_t / 2)
-        rows = filter(lambda x: date2str(start_time) <= x[0] <= date2str(end_time),
-                      all_rows)
+        rows = [x for x in all_rows if date2str(start_time) <= x[0] <= date2str(end_time)]
         if len(rows) == 0:
             speeds.append({
                 'time': date2str(timestamps[i]),
                 'speed': 0
             })
             continue
-        rows = merge_locations_by_date([dict(zip(cols, row)) for row in rows])
+        rows = merge_locations_by_date([dict(list(zip(cols, row))) for row in rows])
         get_delta_by_day(rows)
         speed = entropy(rows, delta_t, [start_time, end_time])
         speeds.append({
@@ -302,13 +300,13 @@ def get_speed_by_day(all_rows, day):
 def get_speed_by_day_at_change_point(all_rows, day):
     cols = ['start_time', 'location']
     speeds = []
-    results = merge_locations_by_date([dict(zip(cols, row)) for row in all_rows])
+    results = merge_locations_by_date([dict(list(zip(cols, row))) for row in all_rows])
 
     points = set()
     for location in results:
         points.add(location['start_time'])
         points.add(location['end_time'])
-    points = map(lambda x: str2date(x), sorted(points))
+    points = [str2date(x) for x in sorted(points)]
 
     if len(all_rows) == 0:
         return speeds
@@ -317,15 +315,14 @@ def get_speed_by_day_at_change_point(all_rows, day):
     for i in range(len(points)):
         start_time = points[i] - datetime.timedelta(minutes=delta_t / 2)
         end_time = points[i] + datetime.timedelta(minutes=delta_t / 2)
-        rows = filter(lambda x: date2str(start_time) <= x[0] <= date2str(end_time),
-                      all_rows)
+        rows = [x for x in all_rows if date2str(start_time) <= x[0] <= date2str(end_time)]
         if len(rows) == 0:
             speeds.append({
                 'time': date2str(points[i]),
                 'speed': 0
             })
             continue
-        rows = merge_locations_by_date([dict(zip(cols, row)) for row in rows])
+        rows = merge_locations_by_date([dict(list(zip(cols, row))) for row in rows])
         get_delta_by_day(rows)
         speed = entropy(rows, delta_t, [start_time, end_time])
         speeds.append({
@@ -380,8 +377,8 @@ def speed_by_uid(uid):
 
     for day in range(1, 32):
         day = '201312%02d' % day
-        rows_by_day = filter(lambda x: x[2] == day, all_rows)
-        rows_by_day = map(lambda x: x[:2], rows_by_day)
+        rows_by_day = [x for x in all_rows if x[2] == day]
+        rows_by_day = [x[:2] for x in rows_by_day]
         speeds = get_speed_by_day(rows_by_day, day)
         result.append(speeds)
 
@@ -399,7 +396,7 @@ def location_by_uid_day(uid, day):
                         where uid = %s and log_date = %s order by start_time"""
     cursor.execute(prepare_sql, (uid, day))
     rows = cursor.fetchall()
-    results = [dict(zip(cols, row)) for row in rows]
+    results = [dict(list(zip(cols, row))) for row in rows]
     return make_response(dumps(merge_locations_by_date(results)))
 
 
@@ -414,7 +411,7 @@ def location_by_uid_day_stop(uid, day):
                         where uid = %s and log_date = %s order by start_time"""
     cursor.execute(prepare_sql, (uid, day))
     rows = cursor.fetchall()
-    results = merge_locations_by_date([dict(zip(cols, row)) for row in rows])
+    results = merge_locations_by_date([dict(list(zip(cols, row))) for row in rows])
     get_delta_by_day(results)
     results = get_stop_by_day(results)
     return make_response(dumps(results))
@@ -431,7 +428,7 @@ def app_log_by_uid_day(uid, day):
                             where uid = %s and day = %s order by minute"""
     cursor.execute(prepare_sql, (uid, day))
     rows = cursor.fetchall()
-    results = [dict(zip(cols, row)) for row in rows]
+    results = [dict(list(zip(cols, row))) for row in rows]
     return make_response(dumps(results))
 
 
@@ -457,17 +454,17 @@ def proba_matrix(uid):
 def tag_proba_matrix(uid):
     locations = _location_by_uid_stop(uid)
     matrix = generate_matrix(locations)
-    semantic_data = fetch_semantic_data(matrix.keys())
+    semantic_data = fetch_semantic_data(list(matrix.keys()))
     semantic_dict = {}
     for row in semantic_data:
         semantic_dict[row['location']] = clean_tags(row['tags'], 5)
     tag_matrix = {}
-    for location, proba in matrix.items():
+    for location, proba in list(matrix.items()):
         tag_dict = semantic_dict[location]
-        tag_weight = sum(v for v in tag_dict.values())
+        tag_weight = sum(v for v in list(tag_dict.values()))
         if tag_weight == 0:
             continue
-        for tag, cnt in tag_dict.items():
+        for tag, cnt in list(tag_dict.items()):
             tag_matrix.setdefault(tag, [0] * 48)
             for i in range(48):
                 tag_matrix[tag][i] += (proba[i] * cnt + 0.001) / (tag_weight + 0.001)
@@ -542,7 +539,7 @@ def web_req_histgram(uid):
 
     cursor.execute(prepare_sql, (uid,))
     rows = cursor.fetchall()
-    results = [dict(zip(cols, row)) for row in rows]
+    results = [dict(list(zip(cols, row))) for row in rows]
     return make_response(dumps(results))
 
 
@@ -557,7 +554,7 @@ def site_count(uid):
 
     cursor.execute(prepare_sql, (uid,))
     rows = cursor.fetchall()
-    results = [dict(zip(cols, row)) for row in rows]
+    results = [dict(list(zip(cols, row))) for row in rows]
     return make_response(dumps(results))
 
 
@@ -572,7 +569,7 @@ def app_count(uid):
 
     cursor.execute(prepare_sql, (uid,))
     rows = cursor.fetchall()
-    results = [dict(zip(cols, row)) for row in rows]
+    results = [dict(list(zip(cols, row))) for row in rows]
     return make_response(dumps(results))
 
 
@@ -586,7 +583,7 @@ def call_histgram(uid):
 
     cursor.execute(prepare_sql, (uid,))
     rows = cursor.fetchall()
-    results = [dict(zip(cols, row)) for row in rows]
+    results = [dict(list(zip(cols, row))) for row in rows]
     return make_response(dumps(results))
 
 
@@ -594,10 +591,10 @@ def fetch_semantic_data(locations):
     cols = ['location', 'station_desc', 'tags', 'addr', 'business']
     cursor = db.cursor()
     prepare_sql = """select location, station_desc, tags, addr, business from semantic4 where location in (%s)""" % \
-        ','.join(map(lambda x: "'" + x + "'", locations))
+        ','.join(["'" + x + "'" for x in locations])
     cursor.execute(prepare_sql)
     rows = cursor.fetchall()
-    return [dict(zip(cols, row)) for row in rows]
+    return [dict(list(zip(cols, row))) for row in rows]
 
 
 @app.route("/semantic_data/<uid>")
@@ -644,7 +641,7 @@ def fetch_uid_app_data(uid):
                         order by day, minute"""
     cursor.execute(prepare_sql, (uid, '被动%'))
     rows = cursor.fetchall()
-    return [dict(zip(cols, row)) for row in rows]
+    return [dict(list(zip(cols, row))) for row in rows]
 
 
 def fetch_uid_app_data_with_condition(uid, condition=''):
@@ -663,7 +660,7 @@ def fetch_uid_app_data_with_condition(uid, condition=''):
                         order by day, minute"""
     cursor.execute(prepare_sql, (uid, '被动%'))
     rows = cursor.fetchall()
-    return [dict(zip(cols, row)) for row in rows]
+    return [dict(list(zip(cols, row))) for row in rows]
 
 
 def fetch_uid_app_type_data(uid):
@@ -680,7 +677,7 @@ def fetch_uid_app_type_data(uid):
                         order by day, minute"""
     cursor.execute(prepare_sql, (uid, '被动%'))
     rows = cursor.fetchall()
-    return [dict(zip(cols, row)) for row in rows]
+    return [dict(list(zip(cols, row))) for row in rows]
 
 
 def fetch_uid_app_type_data_with_condition(uid, condition=''):
@@ -697,7 +694,7 @@ def fetch_uid_app_type_data_with_condition(uid, condition=''):
                         order by day, minute"""
     cursor.execute(prepare_sql, (uid, '被动%'))
     rows = cursor.fetchall()
-    return [dict(zip(cols, row)) for row in rows]
+    return [dict(list(zip(cols, row))) for row in rows]
 
 
 @app.route("/app_by_uid/<uid>")

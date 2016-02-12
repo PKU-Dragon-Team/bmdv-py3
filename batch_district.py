@@ -11,8 +11,9 @@ from get_stop import get_stop, get_delta
 import json
 from csv import DictWriter
 import sys
+import imp
 
-reload(sys)
+imp.reload(sys)
 exec("sys.setdefaultencoding('utf-8')");
 
 
@@ -26,7 +27,7 @@ def get_district_logs(uid, db):
 def area_by_uid_stop(uid, db, area_func):
     results = area_func(uid, db)
     invalids = check_error_points(raw_merge_locations_by_date(results))
-    results = filter(lambda x: (x['location'], x['start_time']) not in invalids, results)
+    results = [x for x in results if (x['location'], x['start_time']) not in invalids]
     locations = merge_locations(results)
     get_delta(locations)
     locations = get_stop(locations, 30)

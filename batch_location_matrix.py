@@ -10,8 +10,9 @@ from periodic_probability_matrix import generate_matrix
 import json
 from csv import DictWriter
 import sys
+import imp
 
-reload(sys)
+imp.reload(sys)
 exec("sys.setdefaultencoding('utf-8')");
 
 

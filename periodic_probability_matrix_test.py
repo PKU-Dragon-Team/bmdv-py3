@@ -10,9 +10,9 @@ class PpmTestCase(unittest.TestCase):
         pass
 
     def print_result(self, matrix):
-        for location, row in matrix.items():
-            print location
-            print ' '.join(map(lambda x: '%.3f' % x, row))
+        for location, row in list(matrix.items()):
+            print(location)
+            print(' '.join(['%.3f' % x for x in row]))
 
     def test_get_time_interval(self):
         self.assertEqual(ppm.get_time_interval('20131229000000', '20131229062222'), (0, 12))

@@ -61,10 +61,10 @@ def entropy(move, delta_t, time_range):
         to_ts = min(time_range[1], last_end_time)
         location_time_ranges[last_location] += (to_ts - from_ts).total_seconds() / 60.0
 
-    for location in location_time_ranges.keys():
+    for location in list(location_time_ranges.keys()):
         location_time_ranges[location] /= delta_t
 
-    entropy = sum([-1 * proba * math.log(proba, 2) for proba in location_time_ranges.values() if proba > 0])
+    entropy = sum([-1 * proba * math.log(proba, 2) for proba in list(location_time_ranges.values()) if proba > 0])
     return entropy
 
 
@@ -115,76 +115,76 @@ def transient_entropy(location, move):
         to_ts = min(time_range[1], last_end_time)
         location_time_ranges[last_location] += (to_ts - from_ts).total_seconds() / 60.0
 
-    for location in location_time_ranges.keys():
+    for location in list(location_time_ranges.keys()):
         location_time_ranges[location] /= delta_t
 
-    entropy = sum([-1 * proba * math.log(proba, 2) for proba in location_time_ranges.values() if proba > 0])
+    entropy = sum([-1 * proba * math.log(proba, 2) for proba in list(location_time_ranges.values()) if proba > 0])
     return entropy
 
 
 
 if __name__ == '__main__':
     data = [[{'duration': 0.0,
-              u'end_time': u'20131201102549',
-              u'location': u'116.34636 40.02413',
-              u'start_time': u'20131201102549'},
+              'end_time': '20131201102549',
+              'location': '116.34636 40.02413',
+              'start_time': '20131201102549'},
              {'duration': 0.0,
-              u'end_time': u'20131201102549',
-              u'location': u'116.38127 39.97306',
-              u'start_time': u'20131201102549'},
+              'end_time': '20131201102549',
+              'location': '116.38127 39.97306',
+              'start_time': '20131201102549'},
              {'duration': 0.0,
-              u'end_time': u'20131201102550',
-              u'location': u'116.34636 40.02413',
-              u'start_time': u'20131201102550'},
+              'end_time': '20131201102550',
+              'location': '116.34636 40.02413',
+              'start_time': '20131201102550'},
              {'duration': 0.0,
-              u'end_time': u'20131201102552',
-              u'location': u'116.38127 39.97306',
-              u'start_time': u'20131201102552'}],
+              'end_time': '20131201102552',
+              'location': '116.38127 39.97306',
+              'start_time': '20131201102552'}],
             [{'duration': 0.0,
-              u'end_time': u'20131201114531',
-              u'location': u'116.35673 40.01079',
-              u'start_time': u'20131201114531'},
+              'end_time': '20131201114531',
+              'location': '116.35673 40.01079',
+              'start_time': '20131201114531'},
              {'duration': 0.0,
-              u'end_time': u'20131201114705',
-              u'location': u'116.34636 40.02413',
-              u'start_time': u'20131201114705'}],
+              'end_time': '20131201114705',
+              'location': '116.34636 40.02413',
+              'start_time': '20131201114705'}],
             [{'duration': 10.616666666666667,
-              u'end_time': u'20131201131856',
-              u'location': u'116.38986 39.96212',
-              u'start_time': u'20131201130819'},
+              'end_time': '20131201131856',
+              'location': '116.38986 39.96212',
+              'start_time': '20131201130819'},
              {'duration': 0.0,
-              u'end_time': u'20131201131857',
-              u'location': u'116.37256 39.95921',
-              u'start_time': u'20131201131857'},
+              'end_time': '20131201131857',
+              'location': '116.37256 39.95921',
+              'start_time': '20131201131857'},
              {'duration': 0.0,
-              u'end_time': u'20131201131857',
-              u'location': u'116.38986 39.96212',
-              u'start_time': u'20131201131857'},
+              'end_time': '20131201131857',
+              'location': '116.38986 39.96212',
+              'start_time': '20131201131857'},
              {'duration': 0.0,
-              u'end_time': u'20131201131904',
-              u'location': u'116.37256 39.95921',
-              u'start_time': u'20131201131904'},
+              'end_time': '20131201131904',
+              'location': '116.37256 39.95921',
+              'start_time': '20131201131904'},
              {'duration': 0.0,
-              u'end_time': u'20131201132129',
-              u'location': u'116.37636 39.97060',
-              u'start_time': u'20131201132129'},
+              'end_time': '20131201132129',
+              'location': '116.37636 39.97060',
+              'start_time': '20131201132129'},
              {'duration': 3.2666666666666666,
-              u'end_time': u'20131201132658',
-              u'location': u'116.36282 39.96718',
-              u'start_time': u'20131201132342'}],
+              'end_time': '20131201132658',
+              'location': '116.36282 39.96718',
+              'start_time': '20131201132342'}],
             [{'duration': 14.816666666666666,
-              u'end_time': u'20131201145000',
-              u'location': u'116.31258 39.97103',
-              u'start_time': u'20131201143511'},
+              'end_time': '20131201145000',
+              'location': '116.31258 39.97103',
+              'start_time': '20131201143511'},
              {'duration': 0.0,
-              u'end_time': u'20131201145007',
-              u'location': u'116.31567 39.96686',
-              u'start_time': u'20131201145007'},
+              'end_time': '20131201145007',
+              'location': '116.31567 39.96686',
+              'start_time': '20131201145007'},
              {'duration': 0.0,
-              u'end_time': u'20131201145008',
-              u'location': u'116.31258 39.97103',
-              u'start_time': u'20131201145008'}]]
+              'end_time': '20131201145008',
+              'location': '116.31258 39.97103',
+              'start_time': '20131201145008'}]]
 
     for move in data:
         for location in move:
-            print transient_entropy(location, move)
+            print(transient_entropy(location, move))

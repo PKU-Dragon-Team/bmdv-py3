@@ -36,7 +36,7 @@ def createC1(dataSet):
                 C1.append([item])
 
     C1.sort()
-    return map(tuple, C1)#use frozen set so we can use it as a key in a dict
+    return list(map(tuple, C1))#use frozen set so we can use it as a key in a dict
 
 
 def scanD(D, Ck, minSupport):
@@ -44,7 +44,7 @@ def scanD(D, Ck, minSupport):
     for tid in D:
         for can in Ck:
             if is_subseq(tid, 0, can, 0):
-                if not ssCnt.has_key(can):
+                if can not in ssCnt:
                     ssCnt[can] = 1
                 else:
                     ssCnt[can] += 1
@@ -65,13 +65,13 @@ def aprioriGen(Lk, k): #creates Ck
             L1 = list(Lk[i])[:k-2]
             L2 = list(Lk[j])[:k-2]
             if L1 == L2: #if first k-2 elements are equal
-                retList += map(tuple, list(itertools.permutations(set(Lk[i]) | set(Lk[j]))))
+                retList += list(map(tuple, list(itertools.permutations(set(Lk[i]) | set(Lk[j])))))
     return retList
 
 
 def apriori(dataSet, minSupport=2):
     C1 = createC1(dataSet)
-    D = map(list, dataSet)
+    D = list(map(list, dataSet))
     L1, supportData = scanD(D, C1, minSupport)
     L = [L1]
     k = 2
@@ -100,7 +100,7 @@ def close_seq(L):
 def freq_seq_mining(dataset, minSupport):
     L, supportData = apriori(dataset, minSupport)
     L = close_seq(L)
-    L = filter(lambda x: len(x) > 0, L)
+    L = [x for x in L if len(x) > 0]
     return L, supportData
 
 
@@ -114,4 +114,4 @@ if __name__ == '__main__':
     L = close_seq(L)
     pprint.pprint(L)
     pprint.pprint(st)
-    print freq_seq_mining(items, 2)
+    print(freq_seq_mining(items, 2))

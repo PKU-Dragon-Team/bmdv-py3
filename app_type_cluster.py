@@ -27,14 +27,14 @@ def preprocess(filepath):
     apps = set([])
 
     def to_avg(row):
-        return {k: np.mean(v) for k, v in row.items() if k not in apps}
+        return {k: np.mean(v) for k, v in list(row.items()) if k not in apps}
 
     return df['data'].map(to_avg)
 
 
 def cluster(X, k):
     K, C = kcluster.kcluster(X, correlation, k)
-    print 'silhouette_score: %.5f' % (silhouette_score(X, K, metric=correlation))
+    print('silhouette_score: %.5f' % (silhouette_score(X, K, metric=correlation)))
     return K, C
 
 
@@ -46,8 +46,8 @@ X = dv.fit_transform(app_mean_sample.values)
 
 df = pd.DataFrame(X, columns=dv.get_feature_names(), index=app_mean_sample.index)
 
-valid_columns = [u'旅游', u'游戏', u'电商购物', u'社交沟通', u'社区论坛',
-                 u'网页浏览', u'视频', u'邮箱', u'阅读', u'音乐']
+valid_columns = ['旅游', '游戏', '电商购物', '社交沟通', '社区论坛',
+                 '网页浏览', '视频', '邮箱', '阅读', '音乐']
 
 df = df[valid_columns]
 
@@ -57,7 +57,7 @@ def run_cluster(df, k, topN):
     fig, axes = plt.subplots(k, 1)
     centers = dv.inverse_transform(C)
     for i in range(k):
-        d = dict(sorted(centers[i].items(), key=lambda x: x[1], reverse=True)[:topN])
-        serie = pd.Series(d.values(), index=d.keys())
+        d = dict(sorted(list(centers[i].items()), key=lambda x: x[1], reverse=True)[:topN])
+        serie = pd.Series(list(d.values()), index=list(d.keys()))
         serie.plot(kind='bar', ax=axes[i])
     return K, C

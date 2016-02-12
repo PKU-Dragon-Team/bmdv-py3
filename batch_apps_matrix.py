@@ -8,8 +8,9 @@ from batch_common import dbconfig
 from batch_common import fetch_users
 from app_site_matrix import active_matrix
 import sys
+import imp
 
-reload(sys)
+imp.reload(sys)
 exec("sys.setdefaultencoding('utf-8')");
 
 
@@ -23,7 +24,7 @@ def fetch_uid_app_data(uid, db):
                               and dirty is NULL
                         order by day, minute"""
     data = db.fetchall(prepare_sql, (uid, '被动%'))
-    return [dict(zip(cols, row)) for row in data]
+    return [dict(list(zip(cols, row))) for row in data]
 
 
 def run(outputfile):
